@@ -43,5 +43,5 @@ jobs:
       - name: Retrieve AAB
         uses: actions/upload-artifact@v2
         with:
-          name: apk-release
+          name: app-release
           path: build/app/outputs/bundle/release/app-release.aab
