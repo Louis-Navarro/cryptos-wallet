@@ -1,0 +1,115 @@
+name: Build for iOS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build an IPA file and publish it to Apple Store Connect
+    runs-on: macos-latest
+
+    env:
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.APP_STORE_CONNECT_KEY_IDENTIFIER }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create Folder for certificates and profiles
+        run: |
+          mkdir -p /Users/runner/Library/MobileDevice/Certificates/
+
+      # decode and save the private keys stored as secrets
+      - name: Get private key
+        id: keyFileDecode
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: "cert_key"
+          encodedString: ${{ secrets.P12_BASE64 }}
+
+      - name: Copy Certificate
+        run: |
+          mv ${{ steps.keyFileDecode.outputs.filePath }} /Users/runner/Library/MobileDevice/Certificates/cert_key
+          cat /Users/runner/Library/MobileDevice/Certificates/cert_key
+
+      - name: Get .p8 key
+        id: p8FileDecode
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: "authkey.p8"
+          encodedString: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY_BASE64 }}
+
+      - name: Copy Certificate
+        run: |
+          mv ${{ steps.p8FileDecode.outputs.filePath }} /Users/runner/Library/MobileDevice/Certificates/authkey.p8
+          cat /Users/runner/Library/MobileDevice/Certificates/authkey.p8
+
+      #install the necessary dependencies
+      - name: Install python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.8"
+
+      - name: Install python dependencies
+        run: python -m pip install codemagic-cli-tools
+
+      - name: Initialize Keychain with certificate
+        run: |
+          keychain initialize
+          xcode-project use-profiles
+        env:
+          APP_STORE_CONNECT_PRIVATE_KEY: $(cat /Users/runner/Library/MobileDevice/Certificates/authkey.p8)
+
+      - name: Fetch signing files
+        run: |
+          app-store-connect fetch-signing-files $(xcode-project detect-bundle-id) \
+            --platform IOS \
+            --type IOS_APP_STORE \
+            --private-key=@file:/Users/runner/Library/MobileDevice/Certificates/authkey.p8 \
+            --certificate-key=@file:/Users/runner/Library/MobileDevice/Certificates/cert_key \
+            --create
+
+      - name: Add certificates
+        run: keychain add-certificates
+        env:
+          APP_STORE_CONNECT_PRIVATE_KEY: $(cat /Users/runner/Library/MobileDevice/Certificates/authkey.p8)
+
+      - name: Initialize xcode
+        run: xcode-project use-profiles
+        env:
+          APP_STORE_CONNECT_PRIVATE_KEY: $(cat /Users/runner/Library/MobileDevice/Certificates/authkey.p8)
+
+      #install flutter
+      - name: Install flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: "2.10.5"
+          channel: "stable"
+
+      - name: Setup flutter
+        run: flutter packages pub get
+
+      #build and sign the ipa
+      - name: Install pod files
+        run: find . -name "Podfile" -execdir pod install \;
+
+      - name: Building IPA
+        run: flutter build ipa --release --export-options-plist=$HOME/export_options.plist
+
+      # publish ipa
+      - name: Public to app store connect
+        run: |
+          app-store-connect publish \
+            --path $(find build/ios/ipa/ -name "*.ipa") \
+            --private-key=@file:/Users/runner/Library/MobileDevice/Certificates/authkey.p8
+
+      #collect the files
+      - name: Collect ipa artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: adhoc-ipa
+          path: build/ios/ipa/*.ipa
