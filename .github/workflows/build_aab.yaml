@@ -37,7 +37,7 @@ jobs:
           JKS_KEY: ${{ secrets.JKS_KEY }}
           AAB_PASSWORD: ${{ secrets.AAB_PASSWORD }}
         run: |
-          echo $JKS_KEY | base64 -d > upload-keystore.jks
+          echo $JKS_KEY | base64 -d > android/upload-keystore.jks
           flutter pub get
           flutter build appbundle
       - name: Retrieve AAB
