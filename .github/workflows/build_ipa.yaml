@@ -87,7 +87,7 @@ jobs:
       - name: Install flutter
         uses: subosito/flutter-action@v1
         with:
-          flutter-version: "2.10.5"
+          flutter-version: "3.0.5"
           channel: "stable"
 
       - name: Setup flutter
