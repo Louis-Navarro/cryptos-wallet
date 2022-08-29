@@ -11,6 +11,7 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
+    name: Build an AAB file to publish on the Google Play Store
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
@@ -32,11 +33,15 @@ jobs:
           channel: "stable"
 
       - name: Build apk
+        env:
+          JKS_KEY: ${{ secrets.JKS_KEY }}
+          AAB_PASSWORD: ${{ secrets.AAB_PASSWORD }}
         run: |
+          echo $JKS_KEY | base64 -d > upload-keystore.jks
           flutter pub get
           flutter build appbundle
-      - name: Retrive apk
+      - name: Retrieve AAB
         uses: actions/upload-artifact@v2
         with:
           name: apk-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/bundle/release/app-release.aab
