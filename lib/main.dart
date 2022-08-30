@@ -24,8 +24,8 @@ import 'package:cryptowallet/static/languages.dart';
 
 void main() async {
   await Hive.initFlutter();
-  Hive.deleteBoxFromDisk('settings');
-  // await Hive.openBox('settings');
+  // Hive.deleteBoxFromDisk('settings');
+  await Hive.openBox('settings');
   // Hive.box('settings').put('addresses', [
   // {
   //   'currency': 'DOT',
