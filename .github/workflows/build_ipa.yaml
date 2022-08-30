@@ -89,9 +89,10 @@ jobs:
         with:
           flutter-version: "3.0.5"
           channel: "stable"
+          architecture: arm64
 
       - name: Setup flutter
-        run: flutter packages pub get
+        run: flutter pub get
 
       #build and sign the ipa
       - name: Install pod files
