@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import 'package:cryptowallet/pages/about_page.dart';
 import 'package:flutter/material.dart';
 
 // import 'package:hive/hive.dart';
@@ -137,7 +138,16 @@ class _MainPageState extends State<MainPage>
                           ? lang.labelHome
                           : lang.labelSettings)),
                   centerTitle: true,
-                  backgroundColor: const Color(0xFF2C2C2C),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.question_mark_rounded),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => const AboutPage()));
+                      },
+                    ),
+                  ],
+                  // backgroundColor: const Color(0xFF2C2C2C),
                   // bottom: TabBar(
                   //   controller: _tabController,
                   //   tabs: const [
