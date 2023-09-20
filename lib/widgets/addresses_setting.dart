@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 
 // import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:cryptowallet/widgets/dropdown_widget.dart';
 import 'package:cryptowallet/static/currencies.dart';
@@ -48,67 +49,85 @@ class AddressesSetting extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 final Map<String, String> address =
                     Map<String, String>.from(addresses[index]);
-                return ListTile(
-                  title: Text(address['currency']!),
-                  subtitle: Text(address['address']!),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          final TextEditingController _controller =
-                              TextEditingController(text: address['address']!);
-                          String currency = address['currency']!;
-                          return AlertDialog(
-                            title: Text(lang.labelEditAddressSetting),
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(16),
-                              ),
-                            ),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // Dropdown field to select currency
-                                DropdownWidget(
-                                  choices: currenciesChoices,
-                                  defaultValue: address['currency']!,
-                                  onChanged: (value) {
-                                    currency = value;
-                                  },
-                                ),
-                                TextField(
-                                  decoration: const InputDecoration(
-                                    hintText: 'Address',
-                                  ),
-                                  controller: _controller,
-                                ),
-                                TextButton(
-                                  child: Text(lang.labelEditAddressSetting),
-                                  onPressed: () async {
-                                    final List addresses = box.get(name,
-                                        defaultValue: <Map<String, String>>[]);
-
-                                    if (_controller.text.isEmpty) {
-                                      addresses.removeAt(index);
-                                    } else {
-                                      addresses[index] = <String, String>{
-                                        'currency': currency,
-                                        'address': _controller.text
-                                      };
-                                    }
-
-                                    box.put(name, addresses);
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            ),
-                          );
+                return Slidable(
+                  endActionPane: ActionPane(
+                    children: [
+                      SlidableAction(
+                        onPressed: (context) {
+                          addresses.removeAt(index);
+                          box.put(name, addresses);
+                          Navigator.of(context).pop();
                         },
-                      );
-                    },
+                        icon: Icons.delete,
+                        label: 'Delete',
+                      )
+                    ],
+                    motion: const ScrollMotion(),
+                  ),
+                  child: ListTile(
+                    title: Text(address['currency']!),
+                    subtitle: Text(address['address']!),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            final TextEditingController _controller =
+                                TextEditingController(
+                                    text: address['address']!);
+                            String currency = address['currency']!;
+                            return AlertDialog(
+                              title: Text(lang.labelEditAddressSetting),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(16),
+                                ),
+                              ),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Dropdown field to select currency
+                                  DropdownWidget(
+                                    choices: currenciesChoices,
+                                    defaultValue: address['currency']!,
+                                    onChanged: (value) {
+                                      currency = value;
+                                    },
+                                  ),
+                                  TextField(
+                                    decoration: const InputDecoration(
+                                      hintText: 'Address',
+                                    ),
+                                    controller: _controller,
+                                  ),
+                                  TextButton(
+                                    child: Text(lang.labelEditAddressSetting),
+                                    onPressed: () async {
+                                      final List addresses = box.get(name,
+                                          defaultValue: <
+                                              Map<String, String>>[]);
+
+                                      if (_controller.text.isEmpty) {
+                                        addresses.removeAt(index);
+                                      } else {
+                                        addresses[index] = <String, String>{
+                                          'currency': currency,
+                                          'address': _controller.text
+                                        };
+                                      }
+
+                                      box.put(name, addresses);
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
                 );
               },
