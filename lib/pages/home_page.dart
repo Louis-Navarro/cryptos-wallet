@@ -68,52 +68,52 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> _refresh(List addr, String curr, {doSetState = true}) async {
-    // try {
-    _refreshIndicatorKey.currentState?.show(
-      atTop: true,
-    );
+    try {
+      _refreshIndicatorKey.currentState?.show(
+        atTop: true,
+      );
 
-    final List newData = [];
-    data.clear();
+      final List newData = [];
+      data.clear();
 
-    double newTotal = 0;
+      double newTotal = 0;
 
-    final rates = await _api.convertPairs(addr, curr);
-    for (Map address in addr) {
-      final double balance =
-          await _api.getBalance(address['currency'], address['address']);
+      final rates = await _api.convertPairs(addr, curr);
+      for (Map address in addr) {
+        final double balance =
+            await _api.getBalance(address['currency'], address['address']);
 
-      // // Take a random balance and rate in a map
-      // final Map<String, double> balance = {
-      //   'balance': Random().nextDouble() * 1000
-      // };
-      // final Map<String, double> rate = {'rate': Random().nextDouble() * 10};
-      final double rate = rates[symbolNames[address['currency']]!
-          .toLowerCase()]![curr.toLowerCase()]!;
-      newData.add(<String, dynamic>{
-        'currency': address['currency'],
-        'balance': balance,
-        'rate': rate,
-        'value': balance * rate,
-      });
-      newTotal += balance * rate;
+        // // Take a random balance and rate in a map
+        // final Map<String, double> balance = {
+        //   'balance': Random().nextDouble() * 1000
+        // };
+        // final Map<String, double> rate = {'rate': Random().nextDouble() * 10};
+        final double rate = rates[symbolNames[address['currency']]!
+            .toLowerCase()]![curr.toLowerCase()]!;
+        newData.add(<String, dynamic>{
+          'currency': address['currency'],
+          'balance': balance,
+          'rate': rate,
+          'value': balance * rate,
+        });
+        newTotal += balance * rate;
+      }
+
+      if (doSetState) {
+        setState(() {
+          data = List.from(newData);
+          total = newTotal;
+          error = "";
+        });
+      }
+    } catch (e) {
+      if (doSetState) {
+        setState(() {
+          error = e.toString();
+        });
+      }
+      return;
     }
-
-    if (doSetState) {
-      setState(() {
-        data = List.from(newData);
-        total = newTotal;
-        error = "";
-      });
-    }
-    // } catch (e) {
-    //   if (doSetState) {
-    //     setState(() {
-    //       error = e.toString();
-    //     });
-    //   }
-    //   return;
-    // }
   }
 
   @override
@@ -127,6 +127,17 @@ class _HomePageState extends State<HomePage>
       child: ValueListenableBuilder(
         valueListenable: Hive.box('settings').listenable(),
         builder: (BuildContext context, Box<dynamic> box, Widget? child) {
+          if (error.isNotEmpty) {
+            return Center(
+              child: Text(
+                error,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6!
+                    .copyWith(color: Colors.red),
+              ),
+            );
+          }
           final List newAddresses = box.get('addresses', defaultValue: []);
           final String newCurrency = box.get('currency', defaultValue: 'USD');
           if (!listEquals(newAddresses, oldAddresses) ||
