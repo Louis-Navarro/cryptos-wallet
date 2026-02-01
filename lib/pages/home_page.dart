@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage>
                 error,
                 style: Theme.of(context)
                     .textTheme
-                    .headline6!
+                    .titleLarge!
                     .copyWith(color: Colors.red),
               ),
             );
@@ -164,11 +164,13 @@ class _HomePageState extends State<HomePage>
 
           if (error.isNotEmpty) {
             return Center(
-              child: Text(error,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline6!
-                      .copyWith(color: Theme.of(context).errorColor)),
+              child: Text(
+                error,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(color: Theme.of(context).colorScheme.error),
+              ),
             );
           }
 
@@ -194,14 +196,14 @@ class _HomePageState extends State<HomePage>
                     // return ListTile(
                     //   title: Text(
                     //     'Total',
-                    //     style: Theme.of(context).textTheme.headline6!.copyWith(
+                    //     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     //           color:
                     //               Theme.of(context).colorScheme.inverseSurface,
                     //         ),
                     //   ),
                     //   trailing: Text(
                     //     currencyFormatter.format(total),
-                    //     style: Theme.of(context).textTheme.headline6!.copyWith(
+                    //     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     //           color:
                     //               Theme.of(context).colorScheme.inverseSurface,
                     //         ),
@@ -214,7 +216,7 @@ class _HomePageState extends State<HomePage>
                         title: Text(
                           'Total',
                           style:
-                              Theme.of(context).textTheme.headline6!.copyWith(
+                              Theme.of(context).textTheme.titleLarge!.copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .inverseSurface,
@@ -223,7 +225,7 @@ class _HomePageState extends State<HomePage>
                         trailing: Text(
                           currencyFormatter.format(total),
                           style:
-                              Theme.of(context).textTheme.headline6!.copyWith(
+                              Theme.of(context).textTheme.titleLarge!.copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .inverseSurface,

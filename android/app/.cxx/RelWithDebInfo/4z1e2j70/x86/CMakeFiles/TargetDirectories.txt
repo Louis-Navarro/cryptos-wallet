@@ -1,0 +1,2 @@
+/Users/louisnavarro/Documents/Code/cryptos-wallet/android/app/.cxx/RelWithDebInfo/4z1e2j70/x86/CMakeFiles/edit_cache.dir
+/Users/louisnavarro/Documents/Code/cryptos-wallet/android/app/.cxx/RelWithDebInfo/4z1e2j70/x86/CMakeFiles/rebuild_cache.dir

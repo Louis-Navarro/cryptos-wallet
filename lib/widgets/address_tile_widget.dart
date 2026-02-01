@@ -32,7 +32,7 @@ class AddressTile extends StatelessWidget {
     return ListTile(
       title: Text(
         cryptoCurrency,
-        style: Theme.of(context).textTheme.headline6!,
+        style: Theme.of(context).textTheme.titleLarge!,
       ),
       subtitle: RichText(
         // '1 $cryptoCurrency = $rate',
@@ -40,7 +40,7 @@ class AddressTile extends StatelessWidget {
           children: [
             TextSpan(
               text: rate + '\n',
-              style: Theme.of(context).textTheme.subtitle2!,
+              style: Theme.of(context).textTheme.titleSmall!,
             ),
             TextSpan(
               text: address,
@@ -53,7 +53,7 @@ class AddressTile extends StatelessWidget {
       isThreeLine: true,
       trailing: Text(
         '$balance $cryptoCurrency\n$value',
-        style: Theme.of(context).textTheme.headline6!,
+        style: Theme.of(context).textTheme.titleLarge!,
       ),
     );
   }
@@ -94,7 +94,7 @@ class AddressTile extends StatelessWidget {
 //     return ListTile(
 //       title: Text(
 //         cryptoCurrency,
-//         style: Theme.of(context).textTheme.headline6!,
+//         style: Theme.of(context).textTheme.titleLarge!,
 //       ),
 //       subtitle: Text(
 //         // '1 $cryptoCurrency = $rate',
@@ -103,7 +103,7 @@ class AddressTile extends StatelessWidget {
 //       ),
 //       trailing: Text(
 //         '$balance $cryptoCurrency\n$value',
-//         style: Theme.of(context).textTheme.headline6!,
+//         style: Theme.of(context).textTheme.titleLarge!,
 //       ),
 //     );
 //   }

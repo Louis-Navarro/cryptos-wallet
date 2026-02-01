@@ -17,8 +17,6 @@ import 'package:flutter/material.dart';
 
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'package:cryptowallet/static/languages.dart';
-
 class AboutPage extends StatefulWidget {
   const AboutPage({Key? key}) : super(key: key);
 
